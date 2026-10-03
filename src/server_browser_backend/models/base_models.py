@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, asdict
+from os import getenv
 from typing import List, Optional, Dict, Any
 
 from server_browser_backend.dict_util import get_list_or, get_or, get_or_optional, get_list_or_optional
@@ -67,6 +68,28 @@ class Server:
     max_players: int
     is_verified: bool
     mods: List[Mod]
+
+    def advertised_address(self, client_ip: Optional[str]) -> str:
+        """Return the address that game clients should use to join this server.
+
+        Upstream only returns ``local_ip_address`` to a client whose observed
+        source address matches the registration address. That breaks a
+        reverse-proxied/NAT deployment where every client must receive the
+        explicitly registered public hostname. Keep the upstream policy
+        available, but allow the Pelican deployment to opt into the registered
+        address for every client.
+        """
+        prefer_registered = getenv("PREFER_REGISTERED_ADDRESS", "false").lower() in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
+        if self.local_ip_address is not None and (
+            prefer_registered or client_ip == self.ip_address
+        ):
+            return self.local_ip_address
+        return self.ip_address
 
     @staticmethod
     def create_after_registration(

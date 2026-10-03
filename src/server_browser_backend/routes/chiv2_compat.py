@@ -72,10 +72,7 @@ def payfab_client_matchmake() -> tuple[Response, int]:
     if not server:
         return jsonify(playfab.Error(404, {}, "Lobby does not exist", {}, False)), 404
 
-    joining_locally = client_ip == server.ip_address
-    has_local_ip = server.local_ip_address is not None
-
-    ip_address = server.local_ip_address if joining_locally and has_local_ip else server.ip_address
+    ip_address = server.advertised_address(client_ip)
     return (
         jsonify(
             playfab.Wrapper(

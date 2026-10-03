@@ -28,6 +28,10 @@ The server can be configured using environment variables:
 - `GUNICORN_THREADS`: The number of gunicorn threads (default: `1`).
 - `GUNICORN_LOG_LEVEL`: The gunicorn log level (default: `info`).
 - `GUNICORN_TIMEOUT`: The gunicorn timeout in seconds (default: `30`).
+- `PREFER_REGISTERED_ADDRESS`: When true, always advertise the optional
+  `local_ip_address` supplied by a registering server. This is useful behind
+  Docker/NAT when clients must receive a public DNS name (default: `false`,
+  preserving the upstream same-address policy).
 
 Any additional arguments passed to the docker run command will be passed directly to gunicorn.
 

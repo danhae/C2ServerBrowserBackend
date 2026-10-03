@@ -66,7 +66,7 @@ class Game:
 
     @staticmethod
     def from_server(server: Server, client_ip: Optional[str], fixed_name: Optional[str] = None) -> Game:
-        ip_address = server.local_ip_address if client_ip == server.ip_address and server.local_ip_address is not None else server.ip_address
+        ip_address = server.advertised_address(client_ip)
 
         return Game(
             "paris",
